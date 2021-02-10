@@ -12,6 +12,8 @@ using CuttingEdgeAuthorization.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CuttingEdgeAuthorization
 {
@@ -43,6 +45,13 @@ namespace CuttingEdgeAuthorization
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddScoped<IAuthorizationHandler, AgeRequirementHandler>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator", policy =>
+                                      policy.RequireClaim(ClaimTypes.Role, "Administrator"));
+                options.AddPolicy("MustBe30", policy => policy.Requirements.Add(new AgeRequirement(30)));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +8,16 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@if ((await AuthorizationService.AuthorizeAsync(User, "MustBe30")).Succeeded) 
+{
+    <div class="text-center">
+        Your age is greater than 30.
+    </div>    
+}
+else 
+{
+    <div class="text-center">
+        You are not satisfied 30 year age policy.
+    </div>
+}
